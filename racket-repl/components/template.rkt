@@ -19,7 +19,6 @@
 
 (provide
  static-uri
- container
  page)
 
 (define-syntax known-static-files
@@ -40,25 +39,7 @@
          (track-preload-dependency! p)
          p)]))
 
-(define (container . content)
-  (haml (.container (@ content))))
-
-(define (nav . items)
-  (haml
-   (.nav
-    ([:up-nav ""])
-    (container
-     (haml (.nav__items (@ items)))))))
-
-(define (nav-item uri label)
-  (haml
-   (:li.nav__item
-    (:a
-     ([:href uri]
-      [:up-alias uri])
-     label))))
-
-(define (page . content)
+(define (page #:skip-profile? [skip-profile? #f] . content)
   ;; profile-write is called inside a different thread so we have to
   ;; grab the current profile here and then pass it in to ensure that
   ;; the right profile gets rendered.
@@ -74,7 +55,7 @@
          (:title "Try Racket")
          (:link ([:rel "stylesheet"] [:href (static-uri "css/screen.css")])))
         (:body
-         (.content (@ content))))))
+         (@ content)))))
 
     (response
      200
@@ -86,4 +67,5 @@
        (parameterize ([current-output-port out])
          (displayln "<!doctype html>")
          (write-xml/content (xexpr->xml page))
-         (profile-write profile))))))
+         (unless skip-profile?
+           (profile-write profile)))))))

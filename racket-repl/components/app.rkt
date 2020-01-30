@@ -23,7 +23,8 @@
          web-server/dispatchers/filesystem-map
          web-server/managers/lru
          web-server/servlet-dispatch
-         "../pages/all.rkt")
+         "../pages/all.rkt"
+         "playground.rkt")
 
 (provide
  make-app
@@ -49,13 +50,12 @@
   [(define component-start identity)
    (define component-stop identity)])
 
-(define/contract (make-app flashes sessions)
-  (-> flash-manager? session-manager? app?)
+(define/contract (make-app flashes playground sessions)
+  (-> flash-manager? playground? session-manager? app?)
   (define-values (dispatch reverse-uri req-roles)
     (dispatch-rules+roles
-     [("")
-      dashboard-page]
-
+     [("") editor-page]
+     [("eval") #:method "post" (eval-page playground)]
      [else not-found-page]))
 
   ;; Requests go up (starting from the last wrapper) and respones go down!

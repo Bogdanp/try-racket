@@ -8,14 +8,16 @@
          koyo/session
          racket/contract
          "components/app.rkt"
+         "components/playground.rkt"
          (prefix-in config: "config.rkt"))
 
 ;; System ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
 (define-system prod
-  [app (flashes sessions) make-app]
+  [app (flashes playground sessions) make-app]
   [flashes (sessions) make-flash-manager]
+  [playground () make-playground]
   [server (app) (compose1 (make-server-factory #:host config:http-host
                                                #:port config:http-port) app-dispatcher)]
   [sessions (make-session-manager-factory #:cookie-name config:session-cookie-name

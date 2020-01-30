@@ -7,4 +7,4 @@
 
 (reprovide
  "common.rkt"
- "dashboard.rkt")
+ "editor.rkt")
