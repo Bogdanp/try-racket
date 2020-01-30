@@ -1,4 +1,4 @@
-# racket-repl
+# try-racket
 
 ## Setup
 
@@ -11,8 +11,7 @@
 
     $ nvm use && npm install && npm run build
     $ raco pkg install chief
-    $ raco pkg install racket-repl/                                    # install and build the application and its deps
-    $ raco pkg install racket-repl-tests/                              # install and build the tests and their deps
+    $ raco pkg install try-racket/ try-racket-tests/  # install and build the application and its deps
 
 ### Development environment
 

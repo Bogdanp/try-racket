@@ -4,7 +4,7 @@
          koyo/session
          rackunit/text-ui
 
-         (prefix-in config: racket-repl/config))
+         (prefix-in config: try-racket/config))
 
 
 ;; sessions ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

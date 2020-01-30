@@ -4,12 +4,10 @@
 
 (define deps '())
 (define build-deps '("base"
-                     "component-lib"
                      "db-lib"
                      "koyo-lib"
-                     "threading-lib"
                      "rackunit-lib"
 
-                     "racket-repl"))
+                     "try-racket"))
 
-(define update-implies '("racket-repl"))
+(define update-implies '("try-racket"))

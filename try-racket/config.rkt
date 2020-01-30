@@ -13,13 +13,13 @@
 (define-runtime-path locales-path
   (build-path 'up "resources" "locales"))
 
-(current-locale-specifier 'racket-repl)
+(current-locale-specifier 'try-racket)
 (load-locales! locales-path)
 
 
 ;; config values ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(current-option-name-prefix "RACKET_REPL")
+(current-option-name-prefix "TRY_RACKET")
 
 (define-option version #:default "dev")
 (define-option debug
@@ -51,6 +51,6 @@
 (define-option session-cookie-name #:default "_sid")
 (define-option session-shelf-life #:default "86400"
   (string->number session-shelf-life))
-(define-option session-secret-key-path #:default "/tmp/racket-repl-secret-key")
+(define-option session-secret-key-path #:default "/tmp/try-racket-secret-key")
 (define-option session-secret-key
   (or session-secret-key (make-secret-salt/file session-secret-key-path)))
