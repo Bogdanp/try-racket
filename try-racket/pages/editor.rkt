@@ -28,8 +28,7 @@
       (:input
        ([:id "e"]
         [:name "e"]
-        [:type "hidden"]))
-      (:input ([:type "submit"])))
+        [:type "hidden"])))
      (.editor__eval
       (:ul.editor__eval__toolbar
        (:li
