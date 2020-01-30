@@ -24,8 +24,7 @@
        [:id "form"]
        [:method "POST"]
        [:target "eval"])
-      (:div#editor)
-      (:input
+      (:textarea#editor
        ([:id "e"]
         [:name "e"]
         [:type "hidden"])))
@@ -38,7 +37,10 @@
       (:iframe
        ([:id "eval"]
         [:name "eval"])))
-     (:script ([:src "https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.7/ace.js"]))
+     (:link ([:rel "stylesheet"]
+             [:href (static-uri "vendor/codemirror.css")]))
+     (:script ([:src (static-uri "vendor/codemirror.js")]))
+     (:script ([:src (static-uri "vendor/codemirror-scheme.js")]))
      (:script ([:src (static-uri "js/app.js")]))))))
 
 (define/contract ((eval-page playground) req)

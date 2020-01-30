@@ -1,11 +1,11 @@
-/* globals ace */
+/* globals CodeMirror */
 (function() {
-  var inputEl = document.querySelector("#e");
   var editorEl = document.querySelector("#editor");
   var formEl = document.querySelector("#form");
   var evalEl = document.querySelector("#eval-button");
-  var editor = ace.edit(editorEl, {
-    mode: "ace/mode/scheme"
+  var editor = CodeMirror.fromTextArea(editorEl, {
+    lineNumbers: true,
+    mode: "scheme"
   });
 
   editor.setValue(`\
@@ -15,12 +15,9 @@
       (+ (fib (- n 2))
          (fib (- n 1)))))
 
-(fib 8)
-`);
-  editor.clearSelection();
+(fib 8)`);
 
   evalEl.addEventListener("click", function() {
-    inputEl.value = editor.getValue();
     formEl.submit();
   });
 })();
