@@ -13,7 +13,7 @@
 
 (define (make-sandbox)
   (parameterize ([sandbox-eval-limits '(60 64)])
-    (sandbox 0 (make-evaluator 'racket/base))))
+    (sandbox 0 (make-evaluator 'racket))))
 
 (define (sandbox-extend-deadline s)
   (struct-copy sandbox s [deadline (+ (current-inexact-milliseconds)
