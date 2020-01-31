@@ -5,6 +5,7 @@
                "component-lib"
                "db-lib"
                "koyo-lib"
+               "pict-lib"
                "sandbox-lib"
                "threading-lib"
                "web-server-lib"))
