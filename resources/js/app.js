@@ -19,12 +19,20 @@
     mode: "scheme"
   });
 
+  editor.setOption("extraKeys", {
+    "Ctrl-Enter": function() {
+      submit();
+    }
+  });
+
   editor.setValue(source);
   editor.on("change", function() {
     localStorage.setItem("source", editorEl.value);
   });
 
-  evalEl.addEventListener("click", function() {
+  function submit() {
     formEl.submit();
-  });
+  }
+
+  evalEl.addEventListener("click", submit);
 })();
