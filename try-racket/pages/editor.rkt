@@ -3,6 +3,7 @@
 (require koyo/haml
          koyo/session
          racket/contract
+         racket/format
          racket/sandbox
          threading
          web-server/http
@@ -34,7 +35,7 @@
        (:li
         (:button
          ([:id "eval-button"])
-         "Run")))
+         "▶ Run")))
       (:iframe
        ([:id "eval"]
         [:name "eval"])))
@@ -47,6 +48,7 @@
 (define/contract ((eval-page playground) req)
   (-> playground? (-> request? response?))
   (with-handlers ([exn? render-exn])
+    (define st (current-inexact-milliseconds))
     (define-values (res out)
       (and~> (request-bindings/raw req)
              (bindings-assq #"e" _)
@@ -60,7 +62,12 @@
       (.eval-output
        (:pre (format "~a" out))
        (unless (void? res)
-         (haml (:pre (format "~s" res)))))))))
+         (haml (:pre (format "~s" res))))
+       (.eval-timing
+        (:small "Done after "
+                (~r #:precision 3
+                    (- (current-inexact-milliseconds) st))
+                " ms")))))))
 
 (define (render-exn e)
   (page
