@@ -31,8 +31,8 @@ body {
   }
 
   &__eval {
-    background: #eee;
-    overflow: hidden;
+    background: #000;
+    overflow-y: hidden;
 
     &__toolbar {
       list-style: none;
@@ -68,9 +68,15 @@ body {
 }
 
 .eval-output {
-  background: #eee;
+  background: #000;
+  color: #fff;
   height: 100%;
   padding: 12px;
+
+  &.error {
+    background: #a00;
+    color: #fff;
+  }
 }
 
 .CodeMirror {

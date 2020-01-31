@@ -2,6 +2,8 @@
 
 (require component
          racket/logging
+         racket/match
+         racket/port
          racket/sandbox)
 
 (provide
@@ -9,11 +11,13 @@
  playground?
  playground-eval)
 
-(struct sandbox (deadline evaluator))
+(struct sandbox (deadline evaluator inp outp))
 
 (define (make-sandbox)
-  (parameterize ([sandbox-eval-limits '(60 64)])
-    (sandbox 0 (make-evaluator 'racket))))
+  (define-values (inp outp) (make-pipe))
+  (parameterize ([sandbox-eval-limits '(60 64)]
+                 [sandbox-output outp])
+    (sandbox 0 (make-evaluator 'racket) inp outp)))
 
 (define (sandbox-extend-deadline s)
   (struct-copy sandbox s [deadline (+ (current-inexact-milliseconds)
@@ -50,12 +54,27 @@
     (when (< (sandbox-deadline s) (current-inexact-milliseconds))
       (hash-remove! sandboxes id))))
 
-(define (playground-evaluator/session p id)
+(define (playground-sandbox/session p id)
   (call-with-semaphore (playground-sema p)
     (lambda ()
       (define s (hash-ref! (playground-sandboxes p) id make-sandbox))
-      (begin0 (sandbox-evaluator s)
+      (begin0 s
         (hash-update! (playground-sandboxes p) id sandbox-extend-deadline)))))
 
 (define (playground-eval p id e)
-  ((playground-evaluator/session p id) e))
+  (match-define (sandbox _ evaluator inp outp)
+    (playground-sandbox/session p id))
+  (values
+   (evaluator e)
+   (port->bytes-avail! inp)))
+
+(define (port->bytes-avail! in)
+  (call-with-output-bytes
+   (lambda (out)
+     (define buf (make-bytes (* 1024 16)))
+     (let loop ()
+       (define n-read (read-bytes-avail!* buf in))
+       (unless (or (eof-object? n-read)
+                   (zero? n-read))
+         (display (subbytes buf 0 n-read) out)
+         (loop))))))

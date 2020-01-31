@@ -6,6 +6,7 @@
          racket/sandbox
          threading
          web-server/http
+         web-server/private/util
          "../components/playground.rkt"
          "../components/template.rkt")
 
@@ -45,16 +46,25 @@
 
 (define/contract ((eval-page playground) req)
   (-> playground? (-> request? response?))
-  (define res
-    (with-handlers ([exn:fail:resource? (lambda _ 'error)])
+  (with-handlers ([exn? render-exn])
+    (define-values (res out)
       (and~> (request-bindings/raw req)
              (bindings-assq #"e" _)
              (binding:form-value)
              (bytes->string/utf-8)
-             (playground-eval playground (current-session-id) _))))
+             (playground-eval playground (current-session-id) _)))
 
+    (page
+     #:skip-profile? #t
+     (haml
+      (.eval-output
+       (:pre (format "~a" out))
+       (unless (void? res)
+         (haml (:pre (format "~s" res)))))))))
+
+(define (render-exn e)
   (page
    #:skip-profile? #t
    (haml
-    (.eval-output
-     (:pre (format "~s" res))))))
+    (.eval-output.error
+     (:pre (exn->string e))))))
