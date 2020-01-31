@@ -1,0 +1,10 @@
+/* global nemea */
+// prettier-ignore
+(function() {
+  (function(n, e, m, E, a, $) {
+    n[E]=n[E]||function(){(n[E].q=n[E].q||[]).push(arguments)};$=e.createElement(m);
+    $.id=E;$.src=a;$.async=1;m=e.getElementsByTagName(m)[0];m.parentNode.insertBefore($,m)
+  })(window, document, "script", "nemea", "https://try-racket.nemea.co/track.js");
+
+  nemea("view");
+})();
