@@ -1,9 +1,13 @@
 #lang racket/base
 
-(require koyo/haml
+(require json
+         koyo/haml
+         koyo/json
          koyo/session
+         net/base64
          racket/contract
          racket/format
+         racket/match
          racket/sandbox
          threading
          web-server/http
@@ -47,6 +51,11 @@
 
 (define/contract ((eval-page playground) req)
   (-> playground? (-> request? response?))
+  (define-values (render-exn render-result)
+    (case (response-format req)
+      [(json) (values render-exn/json render-result/json)]
+      [else   (values render-exn/html render-result/html)]))
+
   (with-handlers ([exn? render-exn])
     (define st (current-inexact-milliseconds))
     (define-values (res out)
@@ -56,22 +65,43 @@
              (bytes->string/utf-8)
              (playground-eval playground (current-session-id) _)))
 
-    (page
-     #:skip-profile? #t
-     (haml
-      (.eval-output
-       (:pre (format "~a" out))
-       (unless (void? res)
-         (haml (:pre (format "~s" res))))
-       (.eval-timing
-        (:small "Done after "
-                (~r #:precision 3
-                    (- (current-inexact-milliseconds) st))
-                " ms")))))))
+    (render-result res out (- (current-inexact-milliseconds) st))))
 
-(define (render-exn e)
+(define (response-format req)
+  (match (headers-assq* #"accept" (request-headers/raw req))
+    [(header _ (regexp #"application/json")) 'json]
+    [(header _ (regexp #"text/html")) 'html]
+    [_ 'html]))
+
+(define (render-exn/html e)
   (page
    #:skip-profile? #t
    (haml
     (.eval-output.error
      (:pre (exn->string e))))))
+
+(define (render-result/html res out duration)
+  (page
+   #:skip-profile? #t
+   (haml
+    (.eval-output
+     (:pre (format "~a" out))
+     (unless (void? res)
+       (haml (:pre (format "~s" res))))
+     (.eval-timing
+      (:small "Done after "
+              (~r #:precision 3 duration)
+              " ms"))))))
+
+(define (render-exn/json e)
+  (response/json
+   #:code 400
+   (hasheq 'error (exn->string e))))
+
+(define (render-result/json res out duration)
+  (response/json
+   (hasheq 'output (bytes->string/utf-8 (base64-encode out #""))
+           'result (cond
+                     [(void? res) (json-null)]
+                     [else (format "~s" res)])
+           'duration duration)))
