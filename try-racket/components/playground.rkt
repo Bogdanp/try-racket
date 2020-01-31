@@ -11,6 +11,8 @@
  playground?
  playground-eval)
 
+(define SANDBOX-TTL (* 10 60 1000))
+
 (struct sandbox (deadline evaluator inp outp))
 
 (define (make-sandbox)
@@ -20,8 +22,7 @@
     (sandbox 0 (make-evaluator 'racket) inp outp)))
 
 (define (sandbox-extend-deadline s)
-  (struct-copy sandbox s [deadline (+ (current-inexact-milliseconds)
-                                      (* 30 60 1000))]))
+  (struct-copy sandbox s [deadline (+ (current-inexact-milliseconds) SANDBOX-TTL)]))
 
 (struct playground (sema sandboxes janitor)
   #:methods gen:component
