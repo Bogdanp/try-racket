@@ -31,8 +31,11 @@ body {
   }
 
   &__eval {
+    height: 100%;
     background: #000;
-    overflow-y: hidden;
+    display: flex;
+    flex: 1 auto;
+    flex-direction: column;
 
     &__toolbar {
       list-style: none;
@@ -80,7 +83,7 @@ body {
   }
 
   .eval-timing {
-    margin-top: 6px;
+    margin: 6px 0;
     padding-top: 6px;
     border-top: 1px dashed #333;
     color: #aaa;
