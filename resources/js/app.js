@@ -27,7 +27,7 @@
 
   editor.setValue(source);
   editor.on("change", function() {
-    localStorage.setItem("source", editorEl.value);
+    localStorage.setItem("source", editor.getValue());
   });
 
   function submit() {
