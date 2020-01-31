@@ -18,6 +18,8 @@
 (define (make-sandbox)
   (define-values (inp outp) (make-pipe))
   (parameterize ([sandbox-eval-limits '(60 64)]
+                 [sandbox-namespace-specs (append (sandbox-namespace-specs)
+                                                  (list 'pict))]
                  [sandbox-output outp])
     (sandbox 0 (make-evaluator 'racket) inp outp)))
 

@@ -5,10 +5,13 @@
          koyo/json
          koyo/session
          net/base64
+         pict
+         racket/class
          racket/contract
+         racket/file
          racket/format
          racket/match
-         racket/sandbox
+         racket/port
          threading
          web-server/http
          web-server/private/util
@@ -86,8 +89,14 @@
    (haml
     (.eval-output
      (:pre (format "~a" out))
-     (unless (void? res)
-       (haml (:pre (format "~s" res))))
+     (cond
+       [(pict? res)
+        (haml (:img ([:src (pict->data-url res)])))]
+
+       [(not (void? res))
+        (haml (:pre (format "~s" res)))]
+
+       [else ""])
      (.eval-timing
       (:small "Done after "
               (~r #:precision 3 duration)
@@ -105,3 +114,15 @@
                      [(void? res) (json-null)]
                      [else (format "~s" res)])
            'duration duration)))
+
+(define (pict->data-url p)
+  (define filename (make-temporary-file))
+  (dynamic-wind
+    void
+    (lambda ()
+      (send (pict->bitmap p) save-file filename 'png)
+      (define data (call-with-input-file filename port->bytes))
+      (format "data:image/png;base64,~a" (bytes->string/utf-8
+                                          (base64-encode data #""))))
+    (lambda ()
+      (delete-file filename))))
