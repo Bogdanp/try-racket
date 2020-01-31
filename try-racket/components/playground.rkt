@@ -68,13 +68,16 @@
    (evaluator e)
    (port->bytes-avail! inp)))
 
+(define MAX-OUTPUT-SIZE (* 1 1024 1024))
+
 (define (port->bytes-avail! in)
   (call-with-output-bytes
    (lambda (out)
      (define buf (make-bytes (* 1024 16)))
-     (let loop ()
+     (let loop ([total-read 0])
        (define n-read (read-bytes-avail!* buf in))
        (unless (or (eof-object? n-read)
                    (zero? n-read))
-         (display (subbytes buf 0 n-read) out)
-         (loop))))))
+         (when (< total-read MAX-OUTPUT-SIZE)
+           (display (subbytes buf 0 n-read) out))
+         (loop (+ total-read n-read)))))))
