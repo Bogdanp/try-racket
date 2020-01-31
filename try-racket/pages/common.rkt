@@ -15,7 +15,6 @@
 (define/contract (not-found-page req)
   (-> request? response?)
   (page
-   #:subtitle (translate 'subtitle-not-found)
    (haml
     (.container
      (:h1 (translate 'subtitle-not-found))
