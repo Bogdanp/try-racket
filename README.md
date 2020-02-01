@@ -30,6 +30,9 @@ application is started.
     $ nvm use
     $ raco chief start
 
+## License
+
+    try-racket is licensed under the 3-Clause BSD license.
 
 [Postgres]: https://www.postgresql.org/
 [Racket]: https://racket-lang.org/
