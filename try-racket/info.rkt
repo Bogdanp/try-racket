@@ -3,7 +3,6 @@
 (define collection "try-racket")
 (define deps '("base"
                "component-lib"
-               "db-lib"
                "koyo-lib"
                "pict-lib"
                "sandbox-lib"

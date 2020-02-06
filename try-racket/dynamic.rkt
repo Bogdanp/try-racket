@@ -1,7 +1,6 @@
 #lang racket/base
 
 (require component
-         db
          koyo/flash
          koyo/logging
          koyo/server
@@ -12,7 +11,6 @@
          (prefix-in config: "config.rkt"))
 
 ;; System ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
 
 (define-system prod
   [app (flashes playground sessions) make-app]
